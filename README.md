@@ -1,4 +1,4 @@
-# RESTful Microservice with Spring Boot, Netflix Eureka, and PostgreSQL
+# RESTful Microservice with Spring Boot, Netflix Eureka, and H2 (PostgreSQL optional)
 
 This project implements a RESTful web service using a microservice architecture. The service manages sensor data, including sensor information and measurements. It includes features like persistent storage, a RESTful API, Swagger UI documentation, user account management with different permissions, and a complete microservice setup with an API Gateway, Service Registry, and Config Server.
 
@@ -16,18 +16,51 @@ The project is a multi-module Maven project with the following structure:
 
 - Java 21 or higher
 - Maven 3.6 or higher
-- PostgreSQL
+- PostgreSQL (optional; the project runs with in-memory H2 by default)
 
 ## Database Setup
 
-1.  **Install and start PostgreSQL.**
-2.  **Create a database and user:**
+By default, sensor-service uses an in-memory H2 database, so you can run the project without installing any external database.
 
-    ```sql
-    CREATE DATABASE sensordb;
-    CREATE USER sensoruser WITH PASSWORD 'sensorpassword';
-    GRANT ALL PRIVILEGES ON DATABASE sensordb TO sensoruser;
-    ```
+- H2 console: http://localhost:8082/h2-console
+  - JDBC URL: jdbc:h2:mem:testdb-sensor-service
+  - Username: sa
+  - Password: (leave blank)
+
+Optional: Use PostgreSQL
+- Create a database and user:
+  - CREATE DATABASE sensors;
+  - CREATE USER sensors_user WITH PASSWORD 'strong_password';
+  - GRANT ALL PRIVILEGES ON DATABASE sensors TO sensors_user;
+- Configure sensor-service to use PostgreSQL. You can do it in one of two ways:
+  1) Application YAML (sensor-service/src/main/resources/application.yml):
+
+     ```yaml
+     spring:
+       datasource:
+         url: jdbc:postgresql://localhost:5432/sensors
+         username: sensors_user
+         password: strong_password
+         driver-class-name: org.postgresql.Driver
+       jpa:
+         hibernate:
+           ddl-auto: update
+         properties:
+           hibernate:
+             dialect: org.hibernate.dialect.PostgreSQLDialect
+     ```
+
+  2) Environment variables when starting the JAR:
+
+     ```bash
+     set SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/sensors
+     set SPRING_DATASOURCE_USERNAME=sensors_user
+     set SPRING_DATASOURCE_PASSWORD=strong_password
+     set SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+     set SPRING_JPA_HIBERNATE_DDL_AUTO=update
+     ```
+
+Note: The sensor-service also imports configuration from the Config Server if available (spring.config.import=optional:configserver:http://localhost:8888). Local application.yml values take effect if the Config Server is not running or does not provide overrides.
 
 ## How to Run
 
@@ -64,6 +97,19 @@ The project is a multi-module Maven project with the following structure:
         ```bash
         java -jar api-gateway/target/api-gateway-0.0.1-SNAPSHOT.jar
         ```
+
+Note on Config Server repository:
+- The Config Server is configured to use a Git-backed repo (see config-server/src/main/resources/application.yml).
+- Ensure spring.cloud.config.server.git.uri points to a valid repository on your machine, e.g.:
+  - Windows (local folder): file:///C:/path/to/config-repo
+  - Linux/macOS (local folder): file:///home/you/config-repo
+- If the repository is not available, the services will still work because sensor-service treats the import as optional.
+
+### Service Ports
+- Eureka Server: http://localhost:8761
+- Config Server: http://localhost:8888
+- API Gateway: http://localhost:8080
+- Sensor Service: http://localhost:8082
 
 ## API Usage
 
@@ -140,4 +186,11 @@ Ensure you have Java 21 and Maven installed. Start services in this order:
     - Clean and rebuild the project (mvn clean package).
     - Ensure your IDE uses JDK 21 for both project SDK and compiler, and that the Lombok plugin is up to date. Enable annotation processing in IDE settings.
     - If building multi-module, ensure all modules use the same Java version.
+
+- Config Server cannot start/serve config due to invalid Git URI
+  - Meaning: spring.cloud.config.server.git.uri in config-server/application.yml points to a non-existent or inaccessible location (e.g., file:///home/ubuntu/... on Windows).
+  - Fix: Change it to a valid path or Git URL on your machine, for example:
+    - Windows local folder: file:///C:/path/to/config-repo
+    - Public Git repo: https://github.com/you/your-config-repo.git
+  - Note: sensor-service marks the import as optional; it will still run using its local application.yml if the Config Server is unavailable.
 
