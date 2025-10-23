@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,7 +35,7 @@ public class SecurityConfig {
     http
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+            .requestMatchers("/auth/**", "/swagger-ui/**", "/h2-console/**", "/v3/api-docs/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/sensors/**").hasAnyRole("READ", "WRITE")
             .requestMatchers(HttpMethod.POST, "/sensors/**").hasRole("WRITE")
             .requestMatchers(HttpMethod.PUT, "/sensors/**").hasRole("WRITE")
@@ -44,6 +45,8 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.DELETE, "/measurements/**").hasRole("WRITE")
             .anyRequest().authenticated()
         )
+        .headers(headers -> headers
+            .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authenticationProvider(authenticationProvider())
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
