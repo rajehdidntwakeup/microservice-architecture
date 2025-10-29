@@ -19,8 +19,7 @@ public class Measurement {
 
   public Measurement() {}
 
-  public Measurement(Long id, Sensor sensor, LocalDateTime timestamp, double temperature, double humidity) {
-    this.id = id;
+  public Measurement(Sensor sensor, LocalDateTime timestamp, double temperature, double humidity) {
     this.sensor = sensor;
     this.timestamp = timestamp;
     this.temperature = temperature;

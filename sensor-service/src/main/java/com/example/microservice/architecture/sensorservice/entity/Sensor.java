@@ -14,8 +14,7 @@ public class Sensor {
 
   public Sensor() {}
 
-  public Sensor(Long id, String name, String location, boolean active, String type) {
-    this.id = id;
+  public Sensor(String name, String location, boolean active, String type) {
     this.name = name;
     this.location = location;
     this.active = active;

@@ -1,7 +1,11 @@
 package com.example.microservice.architecture.sensorservice.service;
 
 
+import com.example.microservice.architecture.sensorservice.dto.request.MeasurementRequestDto;
+import com.example.microservice.architecture.sensorservice.dto.response.MeasurementResponseDto;
 import com.example.microservice.architecture.sensorservice.entity.Measurement;
+import com.example.microservice.architecture.sensorservice.entity.Sensor;
+import com.example.microservice.architecture.sensorservice.exception.SensorNotFoundException;
 import com.example.microservice.architecture.sensorservice.repository.MeasurementRepository;
 import com.example.microservice.architecture.sensorservice.repository.SensorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,23 +22,45 @@ public class MeasurementService {
   @Autowired
   private SensorRepository sensorRepository;
 
-  public List<Measurement> findAllMeasurements() {
-    return measurementRepository.findAll();
+  public List<MeasurementResponseDto> findAllMeasurements() {
+    List<Measurement> measurements = measurementRepository.findAll();
+    return measurements.stream()
+        .map(this::convertToDto)
+        .toList();
   }
 
-  public Optional<Measurement> findMeasurementById(Long id) {
-    return measurementRepository.findById(id);
+  public MeasurementResponseDto findMeasurementById(Long id) {
+    Optional<Measurement> measurement = measurementRepository.findById(id);
+    return measurement.map(this::convertToDto).orElse(null);
   }
 
-  public Measurement saveMeasurement(Measurement measurement) {
-    return measurementRepository.save(measurement);
+  public MeasurementResponseDto saveMeasurement(MeasurementRequestDto requestDto) {
+    Optional<Sensor> sensor = sensorRepository.findById(requestDto.getSensorId());
+    if (sensor.isEmpty()) {
+      throw new SensorNotFoundException(requestDto.getSensorId());
+    }
+    Measurement measurement =
+        measurementRepository.save(
+            new Measurement(sensor.get(), requestDto.getTimestamp(),
+                requestDto.getTemperature(), requestDto.getHumidity()));
+    return convertToDto(measurement);
   }
 
-  public List<Measurement> findMeasurementsBySensorId(Long sensorId) {
-    return measurementRepository.findBySensorId(sensorId);
+  public List<MeasurementResponseDto> findMeasurementsBySensorId(Long sensorId) {
+    Optional<Sensor> sensor = sensorRepository.findById(sensorId);
+    if (sensor.isEmpty()) {
+      throw new SensorNotFoundException(sensorId);
+    }
+    List<Measurement> measurements = measurementRepository.findBySensorId(sensorId);
+    return measurements.stream().map(this::convertToDto).toList();
   }
 
   public void deleteMeasurement(Long id) {
     measurementRepository.deleteById(id);
+  }
+
+  private MeasurementResponseDto convertToDto(Measurement measurement) {
+    return new MeasurementResponseDto(measurement.getId(), measurement.getSensor().getId(), measurement.getTimestamp(),
+        measurement.getTemperature(), measurement.getHumidity());
   }
 }

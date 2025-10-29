@@ -1,15 +1,15 @@
-package com.example.microservice.architecture.sensorservice.dto;
+package com.example.microservice.architecture.sensorservice.dto.response;
 
-public class SensorDTO {
+public class SensorResponseDto {
   private Long id;
   private String name;
   private String location;
   private boolean active;
   private String type;
 
-  public SensorDTO() {}
+  public SensorResponseDto() {}
 
-  public SensorDTO(Long id, String name, String location, boolean active, String type) {
+  public SensorResponseDto(Long id, String name, String location, boolean active, String type) {
     this.id = id;
     this.name = name;
     this.location = location;

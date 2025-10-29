@@ -1,12 +1,15 @@
 package com.example.microservice.architecture.sensorservice.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import com.example.microservice.architecture.sensorservice.dto.request.SensorRequestDto;
+import com.example.microservice.architecture.sensorservice.dto.response.SensorResponseDto;
 import com.example.microservice.architecture.sensorservice.entity.Sensor;
+import com.example.microservice.architecture.sensorservice.exception.SensorNotFoundException;
 import com.example.microservice.architecture.sensorservice.repository.SensorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SensorService {
@@ -14,19 +17,43 @@ public class SensorService {
   @Autowired
   private SensorRepository sensorRepository;
 
-  public List<Sensor> findAllSensors() {
-    return sensorRepository.findAll();
+  public List<SensorResponseDto> findAllSensors() {
+    List<Sensor> sensors = sensorRepository.findAll();
+    return sensors.stream().map(this::convertToDto).toList();
   }
 
-  public Optional<Sensor> findSensorById(Long id) {
-    return sensorRepository.findById(id);
+  public SensorResponseDto findSensorById(Long id) {
+    Optional<Sensor> sensor = sensorRepository.findById(id);
+    return sensor.map(this::convertToDto).orElse(null);
   }
 
-  public Sensor saveSensor(Sensor sensor) {
-    return sensorRepository.save(sensor);
+  public SensorResponseDto saveSensor(SensorRequestDto sensorRequestDto) {
+    Sensor sensor = sensorRepository.save(new Sensor(sensorRequestDto.getName(),
+        sensorRequestDto.getLocation(),
+        sensorRequestDto.isActive(),
+        sensorRequestDto.getType()));
+    return convertToDto(sensor);
+  }
+
+  public SensorResponseDto updateSensor(Long id, SensorRequestDto sensorRequestDto) {
+    Optional<Sensor> sensor = sensorRepository.findById(id);
+    if (sensor.isEmpty()) {
+      throw new SensorNotFoundException(id);
+    }
+    Sensor updatedSensor = sensor.get();
+    updatedSensor.setName(sensorRequestDto.getName());
+    updatedSensor.setLocation(sensorRequestDto.getLocation());
+    updatedSensor.setActive(sensorRequestDto.isActive());
+    updatedSensor.setType(sensorRequestDto.getType());
+    return convertToDto(sensorRepository.save(updatedSensor));
   }
 
   public void deleteSensor(Long id) {
     sensorRepository.deleteById(id);
+  }
+
+  private SensorResponseDto convertToDto(Sensor sensor) {
+    return new SensorResponseDto(sensor.getId(), sensor.getName(), sensor.getLocation(), sensor.isActive(),
+        sensor.getType());
   }
 }

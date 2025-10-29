@@ -34,6 +34,7 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
     http
         .csrf(AbstractHttpConfigurer::disable)
+        .cors(org.springframework.security.config.Customizer.withDefaults())
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/auth/**", "/swagger-ui/**", "/h2-console/**", "/v3/api-docs/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/sensors/**").hasAnyRole("READ", "WRITE")
@@ -43,6 +44,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/measurements/**").hasAnyRole("READ", "WRITE")
             .requestMatchers(HttpMethod.POST, "/measurements/**").hasRole("WRITE")
             .requestMatchers(HttpMethod.DELETE, "/measurements/**").hasRole("WRITE")
+            .requestMatchers("/users/**").hasRole("WRITE")
             .anyRequest().authenticated()
         )
         .headers(headers -> headers
@@ -80,5 +82,23 @@ public class SecurityConfig {
   public UserDetailsService userDetailsService() {
     return username -> userRepository.findByUsername(username)
         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+  }
+
+  @Bean
+  public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
+    org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
+    config.setAllowedOrigins(java.util.List.of(
+        "http://desktop-aek3o92.home:8080",
+        "http://desktop-aek3o92.home:3000",
+        "http://localhost:8080",
+        "http://localhost:3000"
+    ));
+    config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+    config.setAllowedHeaders(java.util.List.of("*"));
+    config.setAllowCredentials(true);
+
+    org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config);
+    return source;
   }
 }

@@ -1,17 +1,17 @@
-package com.example.microservice.architecture.sensorservice.dto;
+package com.example.microservice.architecture.sensorservice.dto.response;
 
 import java.time.LocalDateTime;
 
-public class MeasurementDTO {
+public class MeasurementResponseDto {
   private Long id;
   private Long sensorId;
   private LocalDateTime timestamp;
   private double temperature;
   private double humidity;
 
-  public MeasurementDTO() {}
+  public MeasurementResponseDto() {}
 
-  public MeasurementDTO(Long id, Long sensorId, LocalDateTime timestamp, double temperature, double humidity) {
+  public MeasurementResponseDto(Long id, Long sensorId, LocalDateTime timestamp, double temperature, double humidity) {
     this.id = id;
     this.sensorId = sensorId;
     this.timestamp = timestamp;
