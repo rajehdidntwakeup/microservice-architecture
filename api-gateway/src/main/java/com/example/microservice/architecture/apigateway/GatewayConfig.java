@@ -37,6 +37,14 @@ public class GatewayConfig {
                 .path("/auth/**")
                 .uri("lb://sensor-service"))
 
+            .route("measurement-service", r -> r
+                .path("/measurements/**")
+                .uri("lb://sensor-service"))
+
+            .route("user-service", r -> r
+                .path("/users/**")
+                .uri("lb://sensor-service"))
+
             .build();
     }
 }

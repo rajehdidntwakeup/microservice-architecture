@@ -35,7 +35,7 @@ public class AuthenticationService {
     user.setRole("ROLE_READ"); // Default role for new users
     userRepository.save(user);
     var jwtToken = jwtService.generateToken(user);
-    return new AuthResponse(jwtToken);
+    return new AuthResponse(jwtToken, false);
   }
 
   public AuthResponse authenticate(AuthRequest request) {
@@ -48,6 +48,9 @@ public class AuthenticationService {
     var user = userRepository.findByUsername(request.getUsername())
         .orElseThrow();
     var jwtToken = jwtService.generateToken(user);
-    return new AuthResponse(jwtToken);
+    boolean isAdmin = user.getRole().equals("ROLE_WRITE");
+    return new AuthResponse(jwtToken, isAdmin);
   }
+
+
 }

@@ -45,6 +45,8 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, "/measurements/**").hasRole("WRITE")
             .requestMatchers(HttpMethod.DELETE, "/measurements/**").hasRole("WRITE")
             .requestMatchers("/users/**").hasRole("WRITE")
+            .requestMatchers(HttpMethod.GET, "/users/**").hasRole("WRITE")
+            .requestMatchers(HttpMethod.PUT, "/users/**").hasRole("WRITE")
             .anyRequest().authenticated()
         )
         .headers(headers -> headers
