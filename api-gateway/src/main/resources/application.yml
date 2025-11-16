@@ -18,8 +18,6 @@ spring:
             cors-configurations:
               '[/**]':
                 allowed-origins:
-                  - "http://desktop-aek3o92.home:8080"
-                  - "http://desktop-aek3o92.home:3000"
                   - "http://localhost:8080"
                   - "http://localhost:3000"
                 allowed-methods:
@@ -47,4 +45,5 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
   instance:
-    preferIpAddress: true
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}

@@ -28,6 +28,9 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
   instance:
+    # Ensure other services (like API Gateway) use this instance's IP address rather than
+    # a potentially non-resolvable hostname (e.g., DESKTOP-XXXX.mshome.net)
+    prefer-ip-address: true
     instance-id: ${spring.application.name}:${server.port}
 
 application:
