@@ -3,6 +3,9 @@ package com.example.microservice.architecture.sensorservice.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+// Use a lowercase, unquoted table name to avoid case-sensitivity issues on H2
+// and stay consistent with Spring's physical naming strategy.
+@Table(name = "measurement")
 @Entity
 public class Measurement {
   @Id
@@ -14,16 +17,16 @@ public class Measurement {
   private Sensor sensor;
 
   private LocalDateTime timestamp;
-  private double temperature;
-  private double humidity;
+  private double reading;
+  private String unit;
 
   public Measurement() {}
 
-  public Measurement(Sensor sensor, LocalDateTime timestamp, double temperature, double humidity) {
+  public Measurement(Sensor sensor, LocalDateTime timestamp, double reading, String unit) {
     this.sensor = sensor;
     this.timestamp = timestamp;
-    this.temperature = temperature;
-    this.humidity = humidity;
+    this.reading = reading;
+    this.unit = unit;
   }
 
   public Long getId() { return id; }
@@ -35,9 +38,9 @@ public class Measurement {
   public LocalDateTime getTimestamp() { return timestamp; }
   public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
 
-  public double getTemperature() { return temperature; }
-  public void setTemperature(double temperature) { this.temperature = temperature; }
+  public double getReading() { return reading; }
+  public void setReading(double reading) { this.reading = reading; }
 
-  public double getHumidity() { return humidity; }
-  public void setHumidity(double humidity) { this.humidity = humidity; }
+  public String getUnit() { return unit; }
+  public void setUnit(String unit) { this.unit = unit; }
 }

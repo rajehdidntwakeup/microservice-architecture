@@ -8,7 +8,6 @@ import com.example.microservice.architecture.sensorservice.entity.Sensor;
 import com.example.microservice.architecture.sensorservice.exception.SensorNotFoundException;
 import com.example.microservice.architecture.sensorservice.repository.MeasurementRepository;
 import com.example.microservice.architecture.sensorservice.repository.SensorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,10 +16,13 @@ import java.util.Optional;
 @Service
 public class MeasurementService {
 
-  @Autowired
-  private MeasurementRepository measurementRepository;
-  @Autowired
-  private SensorRepository sensorRepository;
+  private final MeasurementRepository measurementRepository;
+  private final SensorRepository sensorRepository;
+
+  public MeasurementService(MeasurementRepository measurementRepository, SensorRepository sensorRepository) {
+    this.measurementRepository = measurementRepository;
+    this.sensorRepository = sensorRepository;
+  }
 
   public List<MeasurementResponseDto> findAllMeasurements() {
     List<Measurement> measurements = measurementRepository.findAll();
@@ -42,7 +44,7 @@ public class MeasurementService {
     Measurement measurement =
         measurementRepository.save(
             new Measurement(sensor.get(), requestDto.getTimestamp(),
-                requestDto.getTemperature(), requestDto.getHumidity()));
+                requestDto.getReading(), requestDto.getUnit()));
     return convertToDto(measurement);
   }
 
@@ -61,6 +63,6 @@ public class MeasurementService {
 
   private MeasurementResponseDto convertToDto(Measurement measurement) {
     return new MeasurementResponseDto(measurement.getId(), measurement.getSensor().getId(), measurement.getTimestamp(),
-        measurement.getTemperature(), measurement.getHumidity());
+        measurement.getReading(), measurement.getUnit());
   }
 }

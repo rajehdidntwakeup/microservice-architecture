@@ -8,14 +8,16 @@ import com.example.microservice.architecture.sensorservice.dto.response.SensorRe
 import com.example.microservice.architecture.sensorservice.entity.Sensor;
 import com.example.microservice.architecture.sensorservice.exception.SensorNotFoundException;
 import com.example.microservice.architecture.sensorservice.repository.SensorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SensorService {
 
-  @Autowired
-  private SensorRepository sensorRepository;
+  private final SensorRepository sensorRepository;
+
+  public SensorService(SensorRepository sensorRepository) {
+    this.sensorRepository = sensorRepository;
+  }
 
   public List<SensorResponseDto> findAllSensors() {
     List<Sensor> sensors = sensorRepository.findAll();

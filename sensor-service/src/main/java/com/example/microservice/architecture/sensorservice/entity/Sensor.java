@@ -1,5 +1,8 @@
 package com.example.microservice.architecture.sensorservice.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -11,6 +14,8 @@ public class Sensor {
   private String location;
   private boolean active;
   private String type;
+  @OneToMany(mappedBy = "sensor", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+  private List<Measurement> measurements = new ArrayList<>();
 
   public Sensor() {}
 
@@ -35,4 +40,13 @@ public class Sensor {
 
   public String getType() { return type; }
   public void setType(String type) { this.type = type; }
+
+  public List<Measurement> getMeasurements() {
+    return measurements;
+  }
+
+  public void setMeasurements(
+      List<Measurement> measurements) {
+    this.measurements = measurements;
+  }
 }

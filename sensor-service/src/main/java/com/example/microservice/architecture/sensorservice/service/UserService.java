@@ -42,6 +42,15 @@ public class UserService {
     return new UserResponseDto(updatedUser.getId(), updatedUser.getUsername(), updatedUser.getRole());
   }
 
+  public String deleteUserById(Long userId) {
+    Optional<User> user = userRepository.findById(userId);
+    if (user.isEmpty()) {
+      throw new UserNotFoundException(userId);
+    }
+    userRepository.deleteById(userId);
+    return "User with id " + userId + " deleted successfully";
+  }
+
   private String normalizeRole(String role) {
     if (role == null) {
       return null;

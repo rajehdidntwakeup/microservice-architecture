@@ -8,6 +8,7 @@ import com.example.microservice.architecture.sensorservice.service.UserService;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -41,6 +42,16 @@ public class UserController {
     try {
       UserResponseDto updatedUser = userService.updateUserRole(userId, role);
       return ResponseEntity.ok(updatedUser);
+    } catch (UserNotFoundException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+  }
+
+  @DeleteMapping("/{userId}")
+  public ResponseEntity<String> deleteUserById(@Parameter(name = "userId") @PathVariable("userId") Long userId) {
+    try {
+      String message = userService.deleteUserById(userId);
+      return ResponseEntity.ok(message);
     } catch (UserNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
     }
