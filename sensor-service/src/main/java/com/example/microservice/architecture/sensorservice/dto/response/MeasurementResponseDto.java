@@ -7,18 +7,18 @@ public class MeasurementResponseDto {
   private Long id;
   private Long sensorId;
   private String timestamp;
-  private double reading;
-  private String unit;
+  private double temperature;
+  private double humidity;
 
   public MeasurementResponseDto() {}
 
-  public MeasurementResponseDto(Long id, Long sensorId, LocalDateTime timestamp, double reading, String unit) {
+  public MeasurementResponseDto(Long id, Long sensorId, LocalDateTime timestamp, double temperature, double humidity) {
     this.id = id;
     this.sensorId = sensorId;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     this.timestamp = timestamp.format(formatter);
-    this.reading = reading;
-    this.unit = unit;
+    this.temperature = temperature;
+    this.humidity = humidity;
   }
 
   public Long getId() { return id; }
@@ -30,9 +30,19 @@ public class MeasurementResponseDto {
   public String getTimestamp() { return timestamp; }
   public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
 
-  public double getReading() { return reading; }
-  public void setReading(double reading) { this.reading = reading; }
+  public double getTemperature() {
+    return temperature;
+  }
 
-  public String getUnit() { return unit; }
-  public void setUnit(String unit) { this.unit = unit; }
+  public void setTemperature(double temperature) {
+    this.temperature = temperature;
+  }
+
+  public double getHumidity() {
+    return humidity;
+  }
+
+  public void setHumidity(double humidity) {
+    this.humidity = humidity;
+  }
 }

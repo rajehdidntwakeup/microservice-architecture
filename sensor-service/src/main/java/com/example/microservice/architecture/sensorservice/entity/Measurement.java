@@ -17,16 +17,16 @@ public class Measurement {
   private Sensor sensor;
 
   private LocalDateTime timestamp;
-  private double reading;
-  private String unit;
+  private double temperature;
+  private double humidity;
 
   public Measurement() {}
 
-  public Measurement(Sensor sensor, LocalDateTime timestamp, double reading, String unit) {
+  public Measurement(Sensor sensor, LocalDateTime timestamp, double temperature, double humidity) {
     this.sensor = sensor;
     this.timestamp = timestamp;
-    this.reading = reading;
-    this.unit = unit;
+    this.temperature = temperature;
+    this.humidity = humidity;
   }
 
   public Long getId() { return id; }
@@ -38,9 +38,19 @@ public class Measurement {
   public LocalDateTime getTimestamp() { return timestamp; }
   public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
 
-  public double getReading() { return reading; }
-  public void setReading(double reading) { this.reading = reading; }
+  public double getTemperature() {
+    return temperature;
+  }
 
-  public String getUnit() { return unit; }
-  public void setUnit(String unit) { this.unit = unit; }
+  public void setTemperature(double temperature) {
+    this.temperature = temperature;
+  }
+
+  public double getHumidity() {
+    return humidity;
+  }
+
+  public void setHumidity(double humidity) {
+    this.humidity = humidity;
+  }
 }

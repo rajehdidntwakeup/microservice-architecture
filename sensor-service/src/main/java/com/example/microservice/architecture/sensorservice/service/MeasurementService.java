@@ -44,7 +44,7 @@ public class MeasurementService {
     Measurement measurement =
         measurementRepository.save(
             new Measurement(sensor.get(), requestDto.getTimestamp(),
-                requestDto.getReading(), requestDto.getUnit()));
+                requestDto.getTemperature(), requestDto.getHumidity()));
     return convertToDto(measurement);
   }
 
@@ -63,6 +63,6 @@ public class MeasurementService {
 
   private MeasurementResponseDto convertToDto(Measurement measurement) {
     return new MeasurementResponseDto(measurement.getId(), measurement.getSensor().getId(), measurement.getTimestamp(),
-        measurement.getReading(), measurement.getUnit());
+        measurement.getTemperature(), measurement.getHumidity());
   }
 }
