@@ -20,6 +20,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import org.springframework.security.web.AuthenticationEntryPoint;
+import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -34,7 +37,7 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
     http
         .csrf(AbstractHttpConfigurer::disable)
-        .cors(org.springframework.security.config.Customizer.withDefaults())
+        .cors(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/auth/**", "/swagger-ui/**", "/h2-console/**", "/v3/api-docs/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/sensors/**").hasAnyRole("READ", "WRITE")
@@ -52,9 +55,19 @@ public class SecurityConfig {
         .headers(headers -> headers
             .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .exceptionHandling(exception -> exception
+            .authenticationEntryPoint(authenticationEntryPoint())
+        )
         .authenticationProvider(authenticationProvider())
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
+  }
+
+  @Bean
+  public AuthenticationEntryPoint authenticationEntryPoint() {
+    return (request, response, authException) -> {
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+    };
   }
 
   @Bean
@@ -86,21 +99,5 @@ public class SecurityConfig {
         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
   }
 
-  @Bean
-  public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
-    org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
-    config.setAllowedOrigins(java.util.List.of(
-        "http://desktop-aek3o92.home:8080",
-        "http://desktop-aek3o92.home:3000",
-        "http://localhost:8080",
-        "http://localhost:3000"
-    ));
-    config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-    config.setAllowedHeaders(java.util.List.of("*"));
-    config.setAllowCredentials(true);
-
-    org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", config);
-    return source;
-  }
+  // CORS is handled centrally at the API Gateway. No CORS configuration here to prevent duplicate headers.
 }

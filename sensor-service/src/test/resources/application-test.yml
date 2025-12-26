@@ -2,7 +2,7 @@ spring:
   application:
     name: sensor-service
   datasource:
-    url: jdbc:h2:mem:testdb-sensor-service-2
+    url: jdbc:h2:mem:testdb-sensor-service
     username: sa
     password:
     driver-class-name: org.h2.Driver

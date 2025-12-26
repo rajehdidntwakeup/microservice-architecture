@@ -1,0 +1,398 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+
+servers:
+  - url: http://10.0.0.19:8082
+    description: Generated server url
+
+security:
+  - bearerAuth: []
+
+paths:
+  /users/{userId}/role/{role}:
+    put:
+      tags:
+        - user-controller
+      operationId: updateUserRole
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: role
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/UserResponseDto"
+
+  /sensors/{id}:
+    get:
+      tags:
+        - sensor-controller
+      operationId: getSensorById
+      parameters:
+        - name: id
+          in: path
+          description: Sensor ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/SensorResponseDto"
+    put:
+      tags:
+        - sensor-controller
+      operationId: updateSensor
+      parameters:
+        - name: id
+          in: path
+          description: Sensor ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SensorRequestDto"
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/SensorResponseDto"
+    delete:
+      tags:
+        - sensor-controller
+      operationId: deleteSensor
+      parameters:
+        - name: id
+          in: path
+          description: Sensor ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: string
+
+  /sensors:
+    get:
+      tags:
+        - sensor-controller
+      operationId: getAllSensors
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SensorResponseDto"
+    post:
+      tags:
+        - sensor-controller
+      operationId: createSensor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SensorRequestDto"
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/SensorResponseDto"
+
+  /measurements:
+    get:
+      tags:
+        - measurement-controller
+      operationId: getAllMeasurements
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MeasurementResponseDto"
+    post:
+      tags:
+        - measurement-controller
+      operationId: createMeasurement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MeasurementRequestDto"
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/MeasurementResponseDto"
+
+  /auth/register:
+    post:
+      tags:
+        - authentication-controller
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthRequest"
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+
+  /auth/authenticate:
+    post:
+      tags:
+        - authentication-controller
+      operationId: authenticate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthRequest"
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+
+  /users:
+    get:
+      tags:
+        - user-controller
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserResponseDto"
+
+  /measurements/{id}:
+    get:
+      tags:
+        - measurement-controller
+      operationId: getMeasurementById
+      parameters:
+        - name: id
+          in: path
+          description: Measurement ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/MeasurementResponseDto"
+    delete:
+      tags:
+        - measurement-controller
+      operationId: deleteMeasurement
+      parameters:
+        - name: id
+          in: path
+          description: Measurement ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: string
+
+  /measurements/sensor/{sensorId}:
+    get:
+      tags:
+        - measurement-controller
+      operationId: getMeasurementsBySensorId
+      parameters:
+        - name: sensorId
+          in: path
+          description: Sensor ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MeasurementResponseDto"
+
+  /users/{userId}:
+    delete:
+      tags:
+        - user-controller
+      operationId: deleteUserById
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: string
+
+components:
+  schemas:
+    UserResponseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        role:
+          type: string
+
+    SensorRequestDto:
+      type: object
+      properties:
+        name:
+          type: string
+        location:
+          type: string
+        active:
+          type: boolean
+        type:
+          type: string
+
+    SensorResponseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        location:
+          type: string
+        active:
+          type: boolean
+        type:
+          type: string
+
+    MeasurementRequestDto:
+      type: object
+      properties:
+        sensorId:
+          type: integer
+          format: int64
+        timestamp:
+          type: string
+          format: date-time
+        temperature:
+          type: number
+          format: double
+        humidity:
+          type: number
+          format: double
+
+    MeasurementResponseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        sensorId:
+          type: integer
+          format: int64
+        timestamp:
+          type: string
+        temperature:
+          type: number
+          format: double
+        humidity:
+          type: number
+          format: double
+
+    AuthRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        admin:
+          type: boolean
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,10 +1,12 @@
 package com.example.microservice.architecture.sensorservice.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class MeasurementRequestDto {
   private Long sensorId;
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime timestamp;
   private double temperature;
   private double humidity;

@@ -19,7 +19,9 @@ spring:
               '[/**]':
                 allowed-origins:
                   - "http://localhost:8080"
+                  - "http://10.0.0.25:8081"
                   - "http://localhost:3000"
+                  - "http://localhost:8081"
                 allowed-methods:
                   - GET
                   - POST
