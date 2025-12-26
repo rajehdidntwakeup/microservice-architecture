@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://swvs-db-service-a.i.aivencloud.com:14313/defaultdb?sslmode=require
     username: avnadmin
-    password:
+    password: AVNS_N_o4onCw9XRV1Eg8GWI
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
