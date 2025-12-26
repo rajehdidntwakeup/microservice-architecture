@@ -15,8 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.Instant;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,7 +35,6 @@ public class MeasurementServiceTest {
     private SensorRepository sensorRepository;
 
     private Sensor testSensor;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @BeforeEach
     void setUp() {
@@ -55,7 +53,7 @@ public class MeasurementServiceTest {
 
     @Test
     void testFindAllMeasurements_whenMeasurementsExist_returnsList() {
-        Measurement measurement = new Measurement(testSensor, LocalDateTime.now(), 25.0, 60.0);
+        Measurement measurement = new Measurement(testSensor, Instant.now(), 25.0, 60.0);
         measurementRepository.save(measurement);
 
         List<MeasurementResponseDto> result = measurementService.findAllMeasurements();
@@ -65,7 +63,7 @@ public class MeasurementServiceTest {
 
     @Test
     void testFindMeasurementById_whenExists_returnsDto() {
-        Measurement measurement = new Measurement(testSensor, LocalDateTime.now(), 25.0, 60.0);
+        Measurement measurement = new Measurement(testSensor, Instant.now(), 25.0, 60.0);
         measurement = measurementRepository.save(measurement);
 
         MeasurementResponseDto result = measurementService.findMeasurementById(measurement.getId());
@@ -81,8 +79,8 @@ public class MeasurementServiceTest {
 
     @Test
     void testSaveMeasurement_withValidData_returnsSavedDto() {
-        String timestampStr = LocalDateTime.now().format(formatter);
-        MeasurementRequestDto requestDto = new MeasurementRequestDto(testSensor.getId(), timestampStr, 22.5, 55.0);
+        Instant timestamp = Instant.now();
+        MeasurementRequestDto requestDto = new MeasurementRequestDto(testSensor.getId(), timestamp, 22.5, 55.0);
 
         MeasurementResponseDto result = measurementService.saveMeasurement(requestDto);
 
@@ -94,14 +92,14 @@ public class MeasurementServiceTest {
 
     @Test
     void testSaveMeasurement_withInvalidSensorId_throwsException() {
-        MeasurementRequestDto requestDto = new MeasurementRequestDto(999L, LocalDateTime.now().format(formatter), 22.5, 55.0);
+        MeasurementRequestDto requestDto = new MeasurementRequestDto(999L, Instant.now(), 22.5, 55.0);
 
         assertThrows(SensorNotFoundException.class, () -> measurementService.saveMeasurement(requestDto));
     }
 
     @Test
     void testFindMeasurementsBySensorId_whenExists_returnsList() {
-        Measurement measurement = new Measurement(testSensor, LocalDateTime.now(), 25.0, 60.0);
+        Measurement measurement = new Measurement(testSensor, Instant.now(), 25.0, 60.0);
         measurementRepository.save(measurement);
 
         List<MeasurementResponseDto> result = measurementService.findMeasurementsBySensorId(testSensor.getId());
@@ -116,7 +114,7 @@ public class MeasurementServiceTest {
 
     @Test
     void testDeleteMeasurement_whenExists_removesMeasurement() {
-        Measurement measurement = new Measurement(testSensor, LocalDateTime.now(), 25.0, 60.0);
+        Measurement measurement = new Measurement(testSensor, Instant.now(), 25.0, 60.0);
         measurement = measurementRepository.save(measurement);
         Long id = measurement.getId();
 

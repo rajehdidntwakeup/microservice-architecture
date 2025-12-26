@@ -19,8 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.Instant;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -51,7 +50,6 @@ public class MeasurementControllerTest {
 
     private String authToken;
     private Sensor testSensor;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @BeforeEach
     void setUp() {
@@ -90,14 +88,14 @@ public class MeasurementControllerTest {
         // Create test measurements
         Measurement measurement1 = new Measurement();
         measurement1.setSensor(testSensor);
-        measurement1.setTimestamp(LocalDateTime.now());
+        measurement1.setTimestamp(Instant.now());
         measurement1.setTemperature(22.5);
         measurement1.setHumidity(65.0);
         measurementRepository.save(measurement1);
 
         Measurement measurement2 = new Measurement();
         measurement2.setSensor(testSensor);
-        measurement2.setTimestamp(LocalDateTime.now().plusHours(1));
+        measurement2.setTimestamp(Instant.now().plusSeconds(3600));
         measurement2.setTemperature(23.0);
         measurement2.setHumidity(60.0);
         measurementRepository.save(measurement2);
@@ -116,7 +114,7 @@ public class MeasurementControllerTest {
     void testGetMeasurementById_whenMeasurementExists_returnsOk() throws Exception {
         Measurement measurement = new Measurement();
         measurement.setSensor(testSensor);
-        measurement.setTimestamp(LocalDateTime.now());
+        measurement.setTimestamp(Instant.now());
         measurement.setTemperature(25.0);
         measurement.setHumidity(70.0);
         measurement = measurementRepository.save(measurement);
@@ -141,10 +139,10 @@ public class MeasurementControllerTest {
 
     @Test
     void testCreateMeasurement_withValidData_returnsOk() throws Exception {
-        String timestamp = LocalDateTime.now().format(formatter);
+        Instant timestamp = Instant.now();
         String requestBody = String.format(
                 "{\"sensorId\": %d, \"timestamp\": \"%s\", \"temperature\": 26.5, \"humidity\": 55.0}",
-                testSensor.getId(), timestamp
+                testSensor.getId(), timestamp.toString()
         );
 
         mockMvc.perform(post("/measurements")
@@ -160,10 +158,10 @@ public class MeasurementControllerTest {
 
     @Test
     void testCreateMeasurement_withInvalidSensorId_returnsNotFound() throws Exception {
-        String timestamp = LocalDateTime.now().format(formatter);
+        Instant timestamp = Instant.now();
         String requestBody = String.format(
                 "{\"sensorId\": 999, \"timestamp\": \"%s\", \"temperature\": 26.5, \"humidity\": 55.0}",
-                timestamp
+                timestamp.toString()
         );
 
         mockMvc.perform(post("/measurements")
@@ -178,14 +176,14 @@ public class MeasurementControllerTest {
         // Create measurements for the test sensor
         Measurement measurement1 = new Measurement();
         measurement1.setSensor(testSensor);
-        measurement1.setTimestamp(LocalDateTime.now());
+        measurement1.setTimestamp(Instant.now());
         measurement1.setTemperature(20.0);
         measurement1.setHumidity(50.0);
         measurementRepository.save(measurement1);
 
         Measurement measurement2 = new Measurement();
         measurement2.setSensor(testSensor);
-        measurement2.setTimestamp(LocalDateTime.now().plusMinutes(30));
+        measurement2.setTimestamp(Instant.now().plusSeconds(1800));
         measurement2.setTemperature(21.0);
         measurement2.setHumidity(52.0);
         measurementRepository.save(measurement2);
@@ -211,7 +209,7 @@ public class MeasurementControllerTest {
     void testDeleteMeasurement_whenMeasurementExists_returnsOk() throws Exception {
         Measurement measurement = new Measurement();
         measurement.setSensor(testSensor);
-        measurement.setTimestamp(LocalDateTime.now());
+        measurement.setTimestamp(Instant.now());
         measurement.setTemperature(24.0);
         measurement.setHumidity(68.0);
         measurement = measurementRepository.save(measurement);

@@ -21,7 +21,7 @@ spring:
       path: /h2-console
 
 server:
-  port: 8082
+  port: 0
 
 eureka:
   client:
@@ -30,7 +30,7 @@ eureka:
   instance:
     # Ensure other services (like API Gateway) use this instance's IP address rather than
     # a potentially non-resolvable hostname (e.g., DESKTOP-XXXX.mshome.net)
-    prefer-ip-address: true
+    #prefer-ip-address: true
     instance-id: ${spring.application.name}:${server.port}
 
 application:

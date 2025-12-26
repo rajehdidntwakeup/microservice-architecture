@@ -1,6 +1,8 @@
 package com.example.microservice.architecture.sensorservice.entity;
 
 import jakarta.persistence.*;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 // Use a lowercase, unquoted table name to avoid case-sensitivity issues on H2
@@ -16,13 +18,13 @@ public class Measurement {
   @JoinColumn(name = "sensor_id")
   private Sensor sensor;
 
-  private LocalDateTime timestamp;
+  private Instant timestamp;
   private double temperature;
   private double humidity;
 
   public Measurement() {}
 
-  public Measurement(Sensor sensor, LocalDateTime timestamp, double temperature, double humidity) {
+  public Measurement(Sensor sensor, Instant timestamp, double temperature, double humidity) {
     this.sensor = sensor;
     this.timestamp = timestamp;
     this.temperature = temperature;
@@ -35,8 +37,8 @@ public class Measurement {
   public Sensor getSensor() { return sensor; }
   public void setSensor(Sensor sensor) { this.sensor = sensor; }
 
-  public LocalDateTime getTimestamp() { return timestamp; }
-  public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+  public Instant getTimestamp() { return timestamp; }
+  public void setTimestamp(Instant timestamp) { this.timestamp = timestamp; }
 
   public double getTemperature() {
     return temperature;

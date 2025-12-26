@@ -37,21 +37,21 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
     http
         .csrf(AbstractHttpConfigurer::disable)
-        .cors(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/auth/**", "/swagger-ui/**", "/h2-console/**", "/v3/api-docs/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/sensors/**").hasAnyRole("READ", "WRITE")
             .requestMatchers(HttpMethod.POST, "/sensors/**").hasRole("WRITE")
             .requestMatchers(HttpMethod.PUT, "/sensors/**").hasRole("WRITE")
             .requestMatchers(HttpMethod.DELETE, "/sensors/**").hasRole("WRITE")
-            .requestMatchers(HttpMethod.GET, "/measurements/**").hasAnyRole("READ", "WRITE")
             .requestMatchers(HttpMethod.POST, "/measurements/**").hasRole("WRITE")
             .requestMatchers(HttpMethod.DELETE, "/measurements/**").hasRole("WRITE")
             .requestMatchers("/users/**").hasRole("WRITE")
             .requestMatchers(HttpMethod.GET, "/users/**").hasRole("WRITE")
             .requestMatchers(HttpMethod.PUT, "/users/**").hasRole("WRITE")
+            .requestMatchers(HttpMethod.GET, "/measurements/**").hasAnyRole("READ", "WRITE")
+            .requestMatchers(HttpMethod.GET, "/sensors/**").hasAnyRole("READ", "WRITE")
             .anyRequest().authenticated()
         )
+        .cors(AbstractHttpConfigurer::disable)
         .headers(headers -> headers
             .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
